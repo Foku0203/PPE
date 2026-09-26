@@ -154,41 +154,6 @@ class PpeImage extends StatelessWidget {
   }
 }
 
-class KpiCard extends StatelessWidget {
-  const KpiCard({super.key, required this.label, required this.value, required this.icon, required this.color, this.onTap});
-
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final fg = AppColors.readable(context, color);
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: fg.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, color: fg, size: 20),
-            ),
-            const SizedBox(height: 10),
-            Text(value, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 2),
-            Text(label, maxLines: 2, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall),
-          ]),
-        ),
-      ),
-    );
-  }
-}
-
 class SectionHeader extends StatelessWidget {
   const SectionHeader(this.title, {super.key, this.action, this.onAction});
 

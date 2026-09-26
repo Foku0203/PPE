@@ -2,16 +2,20 @@
 
 ## Setup (Windows PowerShell)
 
+ใช้ venv เดียวที่ root ของโปรเจกต์ (`D:\PPE\.venv`)
+
 ```powershell
-cd backend
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+cd backend
 Copy-Item .env.example .env
-.\.venv\Scripts\python.exe manage.py migrate
-.\.venv\Scripts\python.exe manage.py seed_ppe
-.\.venv\Scripts\python.exe manage.py runserver 0.0.0.0:8000
-.\.venv\Scripts\python.exe manage.py test ppe
+..\.venv\Scripts\python.exe manage.py migrate
+..\.venv\Scripts\python.exe manage.py seed_ppe
+..\.venv\Scripts\python.exe manage.py runserver 0.0.0.0:8000
+..\.venv\Scripts\python.exe manage.py test ppe
 ```
+
+Django ยังเสิร์ฟแอปเวอร์ชันเว็บ (`ppe_mobile_app/build/web`) ที่ `/` ด้วย และตั้ง `PUBLIC_HOST` เพื่อรับโดเมนสาธารณะ (ดู `start_public.ps1`)
 
 `seed_ppe` สร้าง PPE 13 รายการ (3 ภาษา, ตรงกับรูปใน `ppe_mobile_app/assets/images/ppe/`), สต็อก/ล็อต/Serial, ผู้ใช้ทุก role และคำขอตัวอย่างทุกสถานะ
 (`--no-requests` เพื่อไม่สร้างคำขอตัวอย่าง) — รหัสผ่านทุกบัญชี `ChangeMe123!`: `ADMIN001`, `EHS001`, `STORE001`, `SUP001`, `EMP001`, `EMP002`

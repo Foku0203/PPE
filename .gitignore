@@ -223,12 +223,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Showcase build helpers
-showcase/.chrome-profile/
-showcase/.tmp/
-showcase/shots/*.png
-showcase/shots/_*
-
 # Public sharing (start_public.ps1)
 backend/.public_secret
 qr_code.png
+public_domain.txt
