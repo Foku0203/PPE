@@ -1,0 +1,36 @@
+from django.urls import path
+from .views import (
+    ApprovalView,
+    DashboardView,
+    DeviceTokenView,
+    EmployeeIdTokenView,
+    InventoryIssueView,
+    InventoryListView,
+    InventoryPrepareView,
+    NotificationListView,
+    NotificationReadView,
+    PpeCatalogView,
+    QRChallengeView,
+    QRResolveView,
+    RequisitionDetailView,
+    RequisitionListCreateView,
+    UserMeView,
+)
+
+urlpatterns = [
+    path('auth/token/', EmployeeIdTokenView.as_view(), name='auth_token'),
+    path('me/', UserMeView.as_view(), name='user_me'),
+    path('devices/token/', DeviceTokenView.as_view(), name='device_token'),
+    path('notifications/', NotificationListView.as_view(), name='notification_list'),
+    path('notifications/<int:pk>/read/', NotificationReadView.as_view(), name='notification_read'),
+    path('catalog/ppe/', PpeCatalogView.as_view(), name='ppe_catalog'),
+    path('dashboard/summary/', DashboardView.as_view(), name='dashboard_summary'),
+    path('requisitions/', RequisitionListCreateView.as_view(), name='requisition_list_create'),
+    path('requisitions/<int:pk>/', RequisitionDetailView.as_view(), name='requisition_detail'),
+    path('requisitions/<int:pk>/approvals/', ApprovalView.as_view(), name='requisition_approval'),
+    path('requisitions/<int:pk>/prepare/', InventoryPrepareView.as_view(), name='inventory_prepare'),
+    path('requisitions/<int:pk>/issue/', InventoryIssueView.as_view(), name='inventory_issue'),
+    path('inventory/lots/', InventoryListView.as_view(), name='inventory_list'),
+    path('inventory/scan/challenge/', QRChallengeView.as_view(), name='qr_challenge'),
+    path('inventory/scan/resolve/', QRResolveView.as_view(), name='qr_resolve'),
+]
