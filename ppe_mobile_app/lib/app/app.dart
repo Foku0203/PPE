@@ -73,11 +73,13 @@ class _PPEAppState extends ConsumerState<PPEApp> {
     ref.listen(authControllerProvider, _onAuthChanged);
     final router = ref.watch(routerProvider);
     final language = ref.watch(settingsProvider.select((s) => s.language));
+    final themeMode = ref.watch(settingsProvider.select((s) => s.themeMode));
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
+      themeMode: themeMode,
       locale: language.locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [

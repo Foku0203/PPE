@@ -1046,6 +1046,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get biometricLockSub => '打开应用时需要指纹/面容验证';
 
   @override
+  String get appearance => '外观';
+
+  @override
+  String get themeSystem => '自动';
+
+  @override
+  String get themeLight => '浅色';
+
+  @override
+  String get themeDark => '深色';
+
+  @override
   String get changePassword => '修改密码';
 
   @override

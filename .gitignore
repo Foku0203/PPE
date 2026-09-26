@@ -228,3 +228,7 @@ showcase/.chrome-profile/
 showcase/.tmp/
 showcase/shots/*.png
 showcase/shots/_*
+
+# Public sharing (start_public.ps1)
+backend/.public_secret
+qr_code.png

@@ -9,6 +9,13 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-only-secret-key-change-this-32chars')
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,10.0.2.2').split(',') if host.strip()]
+# Public HTTPS domain (e.g. ngrok) that serves the web app + API from one origin.
+PUBLIC_HOST = os.getenv('PUBLIC_HOST', '').strip()
+if PUBLIC_HOST:
+    ALLOWED_HOSTS.append(PUBLIC_HOST)
+CSRF_TRUSTED_ORIGINS = [f'https://{PUBLIC_HOST}'] if PUBLIC_HOST else []
+# Flutter web build served at `/` (run `flutter build web` in ppe_mobile_app first).
+FLUTTER_WEB_DIR = Path(os.getenv('FLUTTER_WEB_DIR', BASE_DIR.parent / 'ppe_mobile_app' / 'build' / 'web'))
 
 INSTALLED_APPS = [
     'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes',

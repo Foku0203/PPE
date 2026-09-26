@@ -23,6 +23,10 @@ class AppColors {
         RequisitionStatus.rejected => danger,
         RequisitionStatus.cancelled => neutral,
       };
+
+  /// The palette is tuned for light surfaces; lift it in dark mode so navy/grey/red text stays legible.
+  static Color readable(BuildContext context, Color color) =>
+      Theme.of(context).brightness == Brightness.dark ? Color.lerp(color, Colors.white, 0.45)! : color;
 }
 
 class AppTheme {

@@ -13,6 +13,7 @@ import '../../../app_shell/presentation/screens/app_shell.dart';
 import '../../../auth/presentation/screens/auth_provider.dart';
 import '../../../dashboard/presentation/screens/dashboard_provider.dart';
 import '../../../requisitions/data/offline_queue.dart';
+import '../widgets/promo_carousel.dart';
 
 /// Role-aware home: KPIs, alerts, quick actions and recent requests.
 class HomeScreen extends ConsumerWidget {
@@ -49,6 +50,8 @@ class HomeScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
+            const PromoCarousel(),
+            const SizedBox(height: 12),
             if (auth.offline) ...[
               InfoBanner(message: l.offlineBanner, color: AppColors.warning, icon: Icons.wifi_off),
               const SizedBox(height: 8),

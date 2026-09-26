@@ -67,7 +67,7 @@ class NotificationsScreen extends ConsumerWidget {
                   separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (context, i) {
                     final n = items[i];
-                    final color = n.kind == NotificationKind.reorderPoint ? AppColors.warning : AppColors.brand;
+                    final color = AppColors.readable(context, n.kind == NotificationKind.reorderPoint ? AppColors.warning : AppColors.brand);
                     return Dismissible(
                       key: ValueKey(n.id),
                       direction: DismissDirection.endToStart,
@@ -88,7 +88,7 @@ class NotificationsScreen extends ConsumerWidget {
                         subtitle: Text(n.message, maxLines: 2, overflow: TextOverflow.ellipsis),
                         trailing: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
                           Text(Fmt.relative(context, n.createdAt), style: Theme.of(context).textTheme.bodySmall),
-                          if (!n.isRead) const Padding(padding: EdgeInsets.only(top: 4), child: CircleAvatar(radius: 4, backgroundColor: AppColors.brand)),
+                          if (!n.isRead) Padding(padding: const EdgeInsets.only(top: 4), child: CircleAvatar(radius: 4, backgroundColor: AppColors.readable(context, AppColors.brand))),
                         ]),
                         onTap: () async {
                           if (!n.isRead) _setRead(ref, n, true).ignore();

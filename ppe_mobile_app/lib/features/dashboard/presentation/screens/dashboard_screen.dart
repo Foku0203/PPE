@@ -87,6 +87,7 @@ class _BarRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = AppColors.readable(context, this.color);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

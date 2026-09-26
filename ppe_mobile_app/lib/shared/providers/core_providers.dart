@@ -28,16 +28,18 @@ enum AppLanguage {
 }
 
 class AppSettings {
-  const AppSettings({required this.language, required this.biometricEnabled, required this.serverUrl});
+  const AppSettings({required this.language, required this.biometricEnabled, required this.serverUrl, this.themeMode = ThemeMode.system});
 
   final AppLanguage language;
   final bool biometricEnabled;
   final String serverUrl;
+  final ThemeMode themeMode;
 
-  AppSettings copyWith({AppLanguage? language, bool? biometricEnabled, String? serverUrl}) => AppSettings(
+  AppSettings copyWith({AppLanguage? language, bool? biometricEnabled, String? serverUrl, ThemeMode? themeMode}) => AppSettings(
         language: language ?? this.language,
         biometricEnabled: biometricEnabled ?? this.biometricEnabled,
         serverUrl: serverUrl ?? this.serverUrl,
+        themeMode: themeMode ?? this.themeMode,
       );
 }
 
@@ -51,7 +53,13 @@ class SettingsController extends Notifier<AppSettings> {
       language: AppLanguage.fromCode(store.get<String>(StoreKeys.locale)),
       biometricEnabled: store.get<bool>(StoreKeys.biometric) ?? false,
       serverUrl: store.get<String>(StoreKeys.serverUrl) ?? AppConfig.defaultApiBaseUrl,
+      themeMode: ThemeMode.values.asNameMap()[store.get<String>(StoreKeys.themeMode)] ?? ThemeMode.system,
     );
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    state = state.copyWith(themeMode: mode);
+    await _store.put(StoreKeys.themeMode, mode.name);
   }
 
   Future<void> setLanguage(AppLanguage language) async {

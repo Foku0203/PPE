@@ -1062,6 +1062,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get biometricLockSub => 'Require fingerprint / face to open the app';
 
   @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeSystem => 'Auto';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
   String get changePassword => 'Change password';
 
   @override

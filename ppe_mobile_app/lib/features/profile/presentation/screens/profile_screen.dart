@@ -84,6 +84,23 @@ class ProfileScreen extends ConsumerWidget {
                 },
               ),
             ),
+            ListTile(
+              leading: const Icon(Icons.brightness_6_outlined),
+              title: Text(l.appearance),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: SegmentedButton<ThemeMode>(
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment(value: ThemeMode.system, label: Text(l.themeSystem, maxLines: 1)),
+                    ButtonSegment(value: ThemeMode.light, label: Text(l.themeLight, maxLines: 1)),
+                    ButtonSegment(value: ThemeMode.dark, label: Text(l.themeDark, maxLines: 1)),
+                  ],
+                  selected: {settings.themeMode},
+                  onSelectionChanged: (s) => ref.read(settingsProvider.notifier).setThemeMode(s.first),
+                ),
+              ),
+            ),
             if (!kIsWeb)
               SwitchListTile(
                 secondary: const Icon(Icons.fingerprint),

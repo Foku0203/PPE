@@ -1055,6 +1055,18 @@ class AppLocalizationsTh extends AppLocalizations {
   String get biometricLockSub => 'ต้องสแกนลายนิ้วมือ/ใบหน้าเมื่อเปิดแอป';
 
   @override
+  String get appearance => 'ธีม';
+
+  @override
+  String get themeSystem => 'อัตโนมัติ';
+
+  @override
+  String get themeLight => 'สว่าง';
+
+  @override
+  String get themeDark => 'มืด';
+
+  @override
   String get changePassword => 'เปลี่ยนรหัสผ่าน';
 
   @override

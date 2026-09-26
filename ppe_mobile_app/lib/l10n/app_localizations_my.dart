@@ -1065,6 +1065,18 @@ class AppLocalizationsMy extends AppLocalizations {
   String get biometricLockSub => 'အက်ပ်ဖွင့်ရန် လက်ဗွေ / မျက်နှာ လိုအပ်သည်';
 
   @override
+  String get appearance => 'အသွင်အပြင်';
+
+  @override
+  String get themeSystem => 'အလိုအလျောက်';
+
+  @override
+  String get themeLight => 'အလင်း';
+
+  @override
+  String get themeDark => 'အမှောင်';
+
+  @override
   String get changePassword => 'စကားဝှက် ပြောင်းမည်';
 
   @override

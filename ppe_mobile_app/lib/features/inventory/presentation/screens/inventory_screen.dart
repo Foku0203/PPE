@@ -136,7 +136,7 @@ class _StockRow extends StatelessWidget {
   }
 
   Widget _metric(BuildContext context, String label, int value, Color color) => Text.rich(TextSpan(children: [
-        TextSpan(text: '$value ', style: TextStyle(fontWeight: FontWeight.w700, color: color)),
+        TextSpan(text: '$value ', style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.readable(context, color))),
         TextSpan(text: label, style: Theme.of(context).textTheme.bodySmall),
       ]));
 }

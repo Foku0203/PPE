@@ -9,7 +9,13 @@ class AppConfig {
 
   static String get defaultApiBaseUrl {
     if (_envBaseUrl.isNotEmpty) return _envBaseUrl;
-    if (kIsWeb) return 'http://127.0.0.1:8000/api/v1';
+    if (kIsWeb) {
+      // `flutter run -d chrome` serves from a random localhost port; the API is on :8000.
+      // Anywhere else (Django serving the build, public tunnel) the API shares our origin.
+      final origin = Uri.base;
+      final isDevServer = (origin.host == 'localhost' || origin.host == '127.0.0.1') && origin.port != 8000;
+      return isDevServer ? 'http://127.0.0.1:8000/api/v1' : '${origin.origin}/api/v1';
+    }
     // Android emulator reaches the host machine through 10.0.2.2.
     if (defaultTargetPlatform == TargetPlatform.android) return 'http://10.0.2.2:8000/api/v1';
     return 'http://127.0.0.1:8000/api/v1';

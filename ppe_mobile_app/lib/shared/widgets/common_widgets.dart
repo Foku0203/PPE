@@ -97,15 +97,16 @@ class Pill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fg = AppColors.readable(context, color);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: dense ? 8 : 10, vertical: dense ? 2 : 4),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: fg.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(20)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        if (icon != null) ...[Icon(icon, size: dense ? 12 : 14, color: color), const SizedBox(width: 4)],
+        if (icon != null) ...[Icon(icon, size: dense ? 12 : 14, color: fg), const SizedBox(width: 4)],
         Flexible(
           child: Text(label,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: dense ? 11 : 12)),
+              style: TextStyle(color: fg, fontWeight: FontWeight.w600, fontSize: dense ? 11 : 12)),
         ),
       ]),
     );
@@ -164,6 +165,7 @@ class KpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fg = AppColors.readable(context, color);
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -173,8 +175,8 @@ class KpiCard extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, color: color, size: 20),
+              decoration: BoxDecoration(color: fg.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, color: fg, size: 20),
             ),
             const SizedBox(height: 10),
             Text(value, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
@@ -217,13 +219,14 @@ class InfoBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fg = AppColors.readable(context, color);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: color.withValues(alpha: 0.3))),
+      decoration: BoxDecoration(color: fg.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: fg.withValues(alpha: 0.3))),
       child: Row(children: [
-        Icon(icon, color: color, size: 20),
+        Icon(icon, color: fg, size: 20),
         const SizedBox(width: 10),
-        Expanded(child: Text(message, style: TextStyle(color: color))),
+        Expanded(child: Text(message, style: TextStyle(color: fg))),
         if (action != null) TextButton(onPressed: onAction, child: Text(action!)),
       ]),
     );

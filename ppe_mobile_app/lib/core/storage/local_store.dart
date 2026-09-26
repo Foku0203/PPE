@@ -66,6 +66,7 @@ class StoreKeys {
   static const locale = 'settings.locale';
   static const biometric = 'settings.biometric';
   static const serverUrl = 'settings.server_url';
+  static const themeMode = 'settings.theme_mode';
   static const cachedUser = 'cache.user';
   static String catalog(String locale) => 'cache.catalog.$locale';
   static const draftCart = 'draft.cart';
