@@ -72,7 +72,7 @@ class _PromoCarouselState extends State<PromoCarousel> {
       AspectRatio(
         aspectRatio: 16 / 10,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
           child: NotificationListener<ScrollNotification>(
             onNotification: _onScroll,
             child: ScrollConfiguration(
