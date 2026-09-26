@@ -49,6 +49,9 @@ class NotificationType(models.TextChoices):
     APPROVAL_RESULT = 'APPROVAL_RESULT', 'Approval Result'
     READY_FOR_PICKUP = 'READY_FOR_PICKUP', 'Ready for Pickup'
     REORDER_POINT = 'REORDER_POINT', 'Reorder Point Alert'
+    INFO_REQUESTED = 'INFO_REQUESTED', 'More Information Requested'
+    ISSUED = 'ISSUED', 'PPE Issued'
+    ON_HOLD = 'ON_HOLD', 'On Hold (Stock)'
 
 
 class User(AbstractUser):
@@ -68,11 +71,25 @@ class User(AbstractUser):
         return f'{self.employee_id} - {self.display_name}'
 
 
+class PpeCategory(models.TextChoices):
+    HEAD = 'HEAD', 'Head protection'
+    EYE = 'EYE', 'Eye protection'
+    HEARING = 'HEARING', 'Hearing protection'
+    RESPIRATORY = 'RESPIRATORY', 'Respiratory protection'
+    HAND = 'HAND', 'Hand protection'
+    FOOT = 'FOOT', 'Foot protection'
+    BODY = 'BODY', 'Body protection'
+    FALL = 'FALL', 'Fall protection'
+
+
 class PpeItem(models.Model):
     code = models.CharField(max_length=40, unique=True)
+    category = models.CharField(max_length=20, choices=PpeCategory.choices, default=PpeCategory.BODY)
     icon_key = models.CharField(max_length=40, default='shield')
     image_url = models.URLField(blank=True)
     unit = models.CharField(max_length=30, default='piece')
+    sizes = models.CharField(max_length=120, blank=True, help_text='Comma separated, e.g. S,M,L,XL')
+    requires_serial = models.BooleanField(default=False)
     is_returnable = models.BooleanField(default=False)
     quota = models.PositiveIntegerField(null=True, blank=True)
     lifespan_days = models.PositiveIntegerField(null=True, blank=True)
@@ -170,6 +187,17 @@ class RequisitionItem(models.Model):
     return_due_date = models.DateTimeField(null=True, blank=True)
     returned_at = models.DateTimeField(null=True, blank=True)
     is_returned = models.BooleanField(default=False)
+
+
+class RequisitionComment(models.Model):
+    requisition = models.ForeignKey(Requisition, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.PROTECT, related_name='requisition_comments')
+    message = models.TextField()
+    is_info_request = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['created_at']
 
 
 class PurchaseRequestStatus(models.TextChoices):

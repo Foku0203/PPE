@@ -1,4 +1,4 @@
-﻿# PPE Management Mobile App (Flutter)
+# PPE Management Mobile App (Flutter)
 
 ระบบจัดการ PPE สำหรับโรงงานอุตสาหกรรมที่ออกแบบให้รองรับการเบิกอุปกรณ์คุ้มครองความปลอดภัยส่วนบุคคล (PPE) แบบ mobile-first สำหรับพนักงาน ผู้อนุมัติ คลัง และผู้ดูแลระบบ โดยยึดหลักความปลอดภัย การควบคุมสต็อก และการป้องกันการเบิกซ้ำแบบเรียลไทม์
 
@@ -474,9 +474,13 @@ flutter build ios --release
 
 ## 17. สถานะของโครงการปัจจุบัน
 
-โปรเจกต์มี Flutter application skeleton, หน้าจอ workflow หลัก, routing, Riverpod/Dio foundation และ Django REST API foundation แล้ว แต่ยังอยู่ในระดับ **functional UI prototype + API integration foundation** ไม่ใช่ production-ready application
+ระบบทำงานครบ workflow ทุก role (Worker, Supervisor, Store keeper, EHS, Admin) ทั้งแอป Flutter และ Django REST API:
+login/สมัคร/JWT refresh, catalog 4 ภาษา (ไทย/อังกฤษ/พม่า/จีน) พร้อมรูป, คำขอเบิก + ตรวจ quota/lifespan/คำขอซ้ำ, อนุมัติปกติ/พิเศษ, คลังจอง FEFO → QR รับของ → ตัดสต็อก,
+รับคืน, รับของเข้า/ปรับยอด/สั่งซื้อ, แจ้งเตือน, dashboard, audit log, offline queue, biometric lock และ CI
 
-สิ่งที่ยังต้องทำให้เสร็จ ได้แก่ การ login และสมาชิกจริง, การเชื่อมข้อมูลทุกหน้ากับ API, role-based access, approval/inventory workflow แบบ end-to-end, localization ทั้งระบบ, รูปภาพ PPE, push notification, offline strategy และ automated test/release pipeline
+วิธีรัน: [ppe_mobile_app/README.md](ppe_mobile_app/README.md) · API: [backend/backend_README.md](backend/backend_README.md)
+
+สิ่งที่ต้องตั้งค่าเองก่อนขึ้น production (Firebase, signing, build บนมือถือจริง, ค่า production) ดูใน implementation status
 
 ดูรายการสถานะ implementation แบบละเอียดได้ที่ [docs/07-implementation-status.md](docs/07-implementation-status.md)
 

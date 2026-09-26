@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install -r requirements.txt
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py test ppe
+
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ppe_mobile_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test --exclude-tags e2e
+
+  e2e:
+    needs: [backend, flutter]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Start backend with fresh demo data
+        working-directory: backend
+        env:
+          DATABASE_URL: sqlite:///e2e.sqlite3
+        run: |
+          pip install -r requirements.txt
+          python manage.py migrate
+          python manage.py seed_ppe --no-requests
+          python manage.py runserver 127.0.0.1:8000 --noreload &
+          sleep 5
+      - name: Flutter ↔ Django contract test
+        working-directory: ppe_mobile_app
+        run: |
+          flutter pub get
+          flutter test test/e2e --dart-define=E2E_BASE_URL=http://127.0.0.1:8000/api/v1

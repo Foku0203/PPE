@@ -1,0 +1,622 @@
+{
+  "@@locale": "en",
+  "appTitle": "PPE SMART",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "save": "Save",
+  "submit": "Submit",
+  "retry": "Retry",
+  "close": "Close",
+  "confirm": "Confirm",
+  "edit": "Edit",
+  "remove": "Remove",
+  "add": "Add",
+  "clear": "Clear",
+  "all": "All",
+  "yes": "Yes",
+  "no": "No",
+  "optional": "optional",
+  "seeAll": "See all",
+  "done": "Done",
+  "fieldRequired": "Required",
+  "invalidNumber": "Enter a valid number",
+  "offlineBanner": "Offline – showing saved data",
+  "pullToRefresh": "Pull down to refresh",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "errorNoInternet": "Cannot reach the server. Check your connection.",
+  "errorTimeout": "The server took too long to respond.",
+  "errorSessionExpired": "Your session has expired. Please sign in again.",
+  "errorForbidden": "You don't have permission to do this.",
+  "errorNotFound": "Not found.",
+  "errorValidation": "Please check the highlighted fields.",
+  "errInvalidCredentials": "Invalid Employee ID or password.",
+  "errActiveRequestExists": "You already have an open request for this item.",
+  "errSpecialReasonRequired": "Please give a reason for early replacement or quantity above quota.",
+  "errSizeRequired": "Please select a size for every item.",
+  "errInsufficientStock": "Not enough stock.",
+  "errSerialMismatch": "Scanned serial numbers don't match the reserved units.",
+  "errSerialRequired": "This item needs one serial number per unit.",
+  "errSerialExists": "One or more serial numbers already exist.",
+  "errQrInvalid": "QR code is invalid, expired or already used.",
+  "errQrMismatch": "This QR code belongs to a different request.",
+  "errInvalidStatus": "This action isn't possible in the current status.",
+  "errNotApprover": "You are not the approver for this step.",
+  "errReasonRequired": "A reason is required.",
+  "errNegativeStock": "Stock cannot go below zero or below the reserved quantity.",
+  "errWrongPassword": "Current password is incorrect.",
+  "errAlreadyReturned": "This item was already returned.",
+  "errItemInactive": "This item is no longer available.",
+  "errDuplicateLine": "The same item appears twice.",
+  "errExpiredStock": "Cannot receive stock that has already expired.",
+  "loginSubtitle": "Personal protective equipment requisition",
+  "employeeId": "Employee ID",
+  "password": "Password",
+  "signIn": "Sign in",
+  "noAccount": "New employee? Register",
+  "registerTitle": "Register",
+  "displayName": "Full name",
+  "department": "Department",
+  "phoneNumber": "Phone number",
+  "supervisorEmployeeId": "Supervisor Employee ID",
+  "confirmPassword": "Confirm password",
+  "passwordTooShort": "At least 8 characters",
+  "passwordMismatch": "Passwords do not match",
+  "createAccount": "Create account",
+  "haveAccount": "Already registered? Sign in",
+  "registerNote": "New accounts start with the Worker role. An administrator can change roles later.",
+  "serverSettings": "Server settings",
+  "serverUrl": "API base URL",
+  "serverUrlHint": "e.g. http://192.168.1.10:8000/api/v1",
+  "resetDefault": "Reset to default",
+  "demoAccounts": "Demo accounts (password ChangeMe123!)",
+  "unlockTitle": "App locked",
+  "unlockSubtitle": "Verify your identity to continue",
+  "unlock": "Unlock",
+  "biometricReason": "Unlock PPE Management",
+  "biometricUnavailable": "Biometric authentication is not available on this device.",
+  "navHome": "Home",
+  "navCatalog": "Catalog",
+  "navRequests": "Requests",
+  "navApprovals": "Approvals",
+  "navStore": "Store",
+  "navInventory": "Inventory",
+  "navProfile": "Profile",
+  "notificationsTitle": "Notifications",
+  "roleWorker": "Worker",
+  "roleSupervisor": "Supervisor",
+  "roleStoreKeeper": "Store keeper",
+  "roleEhs": "EHS officer",
+  "roleAdmin": "Administrator",
+  "greeting": "Hello, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "quickActions": "Quick actions",
+  "actionNewRequest": "New request",
+  "actionMyPpe": "My PPE",
+  "actionScanQr": "Scan QR",
+  "actionReceiveStock": "Receive stock",
+  "actionPurchaseRequests": "Purchase requests",
+  "actionAuditLog": "Audit log",
+  "actionUsers": "Users",
+  "actionAnalytics": "Analytics",
+  "actionManageCatalog": "Manage catalog",
+  "recentRequests": "Recent requests",
+  "kpiMyOpen": "My open requests",
+  "kpiReadyForPickup": "Ready for pickup",
+  "kpiMyCompleted": "Received",
+  "kpiPendingApproval": "Pending approval",
+  "kpiOverdue": "Overdue (SLA)",
+  "kpiToPrepare": "To prepare",
+  "kpiOnHold": "On hold (stock)",
+  "kpiLowStock": "Low stock items",
+  "kpiCompletedToday": "Issued today",
+  "kpiOpenRequests": "Open requests",
+  "replacementDueTitle": "Replacement due",
+  "replacementDueBody": "{count} item(s) have reached their lifespan: {codes}",
+  "@replacementDueBody": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "lowStockTitle": "Low stock",
+  "availableOfReorder": "{available} left · reorder at {reorder}",
+  "@availableOfReorder": {
+    "placeholders": {
+      "available": {
+        "type": "String"
+      },
+      "reorder": {
+        "type": "String"
+      }
+    }
+  },
+  "complianceTitle": "Safety compliance",
+  "complianceBody": "{ok} of {total} workers have up-to-date PPE",
+  "@complianceBody": {
+    "placeholders": {
+      "ok": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "noRecentRequests": "No requests yet",
+  "pendingSyncBanner": "{count} request(s) waiting to sync",
+  "@pendingSyncBanner": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "syncNow": "Sync now",
+  "catalogTitle": "PPE Catalog",
+  "searchPpe": "Search name, code or size",
+  "inStockOnly": "In stock",
+  "catHead": "Head",
+  "catEye": "Eye",
+  "catHearing": "Hearing",
+  "catRespiratory": "Respiratory",
+  "catHand": "Hand",
+  "catFoot": "Foot",
+  "catBody": "Body",
+  "catFall": "Fall protection",
+  "stockCount": "{count} in stock",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "Out of stock",
+  "lowStockBadge": "Low stock",
+  "quotaPerRequest": "Quota {quota} {unit} / request",
+  "@quotaPerRequest": {
+    "placeholders": {
+      "quota": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "lifespanDays": "Lifespan {days} days",
+  "@lifespanDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "sizes": "Sizes",
+  "serialControlled": "Serial controlled",
+  "returnable": "Must be returned / inspected",
+  "addToRequest": "Add to request",
+  "inRequest": "In request",
+  "requestThis": "Request this item",
+  "eligibilityTitle": "Your eligibility",
+  "eligibleNow": "You can request this item now",
+  "eligibleAt": "Next normal request from {date}",
+  "@eligibleAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastIssuedAt": "Last received {date}",
+  "@lastIssuedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "specialApprovalNeeded": "Needs special approval (Supervisor + EHS)",
+  "editPolicy": "Edit policy",
+  "quotaLabel": "Quota per request",
+  "lifespanLabel": "Lifespan (days)",
+  "reorderPoint": "Reorder point",
+  "activeItem": "Active in catalog",
+  "changeReason": "Reason for change",
+  "changeReasonHint": "Required for audit trail",
+  "policyUpdated": "Policy updated",
+  "noItems": "No PPE found",
+  "inactive": "Inactive",
+  "description": "Description",
+  "unitPiece": "pcs",
+  "unitPair": "pairs",
+  "unitSet": "sets",
+  "newRequestTitle": "New request",
+  "cartEmpty": "No items yet. Add PPE from the catalog.",
+  "browseCatalog": "Browse catalog",
+  "addItem": "Add item",
+  "size": "Size",
+  "quantity": "Quantity",
+  "reason": "Reason",
+  "reasonDamaged": "Damaged",
+  "reasonLifespanExpired": "Lifespan expired",
+  "reasonNewEmployee": "New employee",
+  "reasonLost": "Lost",
+  "reasonReturnScheduled": "Scheduled replacement",
+  "reasonOther": "Other",
+  "specialReasonLabel": "Justification for special approval",
+  "specialReasonHint": "Explain why you need it early or above quota",
+  "submitRequest": "Submit request",
+  "requestSubmitted": "Request {no} submitted",
+  "@requestSubmitted": {
+    "placeholders": {
+      "no": {
+        "type": "String"
+      }
+    }
+  },
+  "requestQueued": "You are offline. The request was saved and will be sent automatically.",
+  "quotaExceededLine": "Above quota ({quota}) – special approval",
+  "@quotaExceededLine": {
+    "placeholders": {
+      "quota": {
+        "type": "String"
+      }
+    }
+  },
+  "lifespanNotExpiredLine": "Not due until {date} – special approval",
+  "@lifespanNotExpiredLine": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "stockLine": "Stock: {count}",
+  "@stockLine": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "requestsTitle": "Requests",
+  "tabActive": "Active",
+  "tabHistory": "History",
+  "scopeMine": "Mine",
+  "scopeTeam": "Team",
+  "scopeAll": "All",
+  "searchRequests": "Search request no. or employee",
+  "noRequests": "No requests",
+  "itemsCount": "{count} item(s)",
+  "@itemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "statusPending": "Pending approval",
+  "statusSpecial": "Special approval",
+  "statusApproved": "Approved",
+  "statusOnHold": "On hold (stock)",
+  "statusReady": "Ready for pickup",
+  "statusCompleted": "Completed",
+  "statusRejected": "Rejected",
+  "statusCancelled": "Cancelled",
+  "overdue": "Overdue",
+  "ageHours": "{hours} h ago",
+  "@ageHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "requestDetail": "Request detail",
+  "requester": "Requester",
+  "createdAt": "Created",
+  "items": "Items",
+  "approvals": "Approvals",
+  "comments": "Comments",
+  "stockHistory": "Stock history",
+  "specialReason": "Special reason",
+  "approve": "Approve",
+  "reject": "Reject",
+  "requestInfo": "Ask for info",
+  "rejectReason": "Reason for rejection",
+  "approveNote": "Note (optional)",
+  "infoQuestion": "What information do you need?",
+  "addComment": "Write a comment",
+  "send": "Send",
+  "cancelRequest": "Cancel request",
+  "cancelConfirm": "Cancel this request? Reserved stock will be released.",
+  "prepare": "Reserve & prepare",
+  "issue": "Issue to employee",
+  "showPickupQr": "Show pickup QR",
+  "pickupQrTitle": "Pickup QR",
+  "pickupQrHint": "Show this code to the store keeper. It can be used once.",
+  "expiresAt": "Expires at {time}",
+  "@expiresAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "qrExpired": "Code expired",
+  "regenerate": "New code",
+  "serialNumbers": "Serial numbers",
+  "serialHint": "Scan or type, one per line",
+  "expectedSerials": "Reserved: {serials}",
+  "@expectedSerials": {
+    "placeholders": {
+      "serials": {
+        "type": "String"
+      }
+    }
+  },
+  "issueConfirmed": "PPE issued",
+  "verifiedByQr": "Verified by pickup QR",
+  "issueWithoutQr": "Issue without QR (manual check)",
+  "returnItem": "Receive return",
+  "conditionGood": "Good – back to stock",
+  "conditionDamaged": "Damaged – write off",
+  "note": "Note",
+  "returned": "Returned",
+  "returnDue": "Return / inspect by {date}",
+  "@returnDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalNormal": "Supervisor approval",
+  "approvalSpecialSupervisor": "Special – Supervisor",
+  "approvalSpecialEhs": "Special – EHS",
+  "approvalStoreRelease": "Store release",
+  "decisionApproved": "Approved",
+  "decisionRejected": "Rejected",
+  "infoRequestTag": "Info requested",
+  "eventReceipt": "Received",
+  "eventReserve": "Reserved",
+  "eventIssue": "Issued",
+  "eventReturn": "Returned",
+  "eventAdjustment": "Adjusted",
+  "eventDamage": "Written off",
+  "progressSubmitted": "Submitted",
+  "progressApproved": "Approved",
+  "progressReady": "Ready",
+  "progressReceived": "Received",
+  "actionSuccess": "Saved",
+  "approvalsTitle": "Approval inbox",
+  "noApprovals": "Nothing is waiting for you",
+  "approvedMsg": "Request approved",
+  "rejectedMsg": "Request rejected",
+  "infoRequestedMsg": "Question sent to the requester",
+  "storeTitle": "Store fulfilment",
+  "tabToPrepare": "To prepare",
+  "tabOnHold": "On hold",
+  "tabReady": "Ready",
+  "scanPickupQr": "Scan pickup QR",
+  "preparedMsg": "Stock reserved – ready for pickup",
+  "onHoldMsg": "Not enough stock – request put on hold",
+  "inventoryTitle": "Inventory",
+  "available": "Available",
+  "reserved": "Reserved",
+  "issued30d": "Issued 30d",
+  "needsReorder": "Reorder",
+  "expiringLots": "{count} lot(s) expiring within 30 days",
+  "@expiringLots": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "lotsTitle": "Lots & serials",
+  "lot": "Lot",
+  "serial": "Serial",
+  "supplier": "Supplier",
+  "expiry": "Expiry",
+  "expired": "Expired",
+  "expiresSoon": "Expiring soon",
+  "adjustStock": "Adjust",
+  "adjustDelta": "Change (+ / −)",
+  "writeOffDamaged": "Write off as damaged",
+  "adjusted": "Stock updated",
+  "receiveStockTitle": "Receive stock",
+  "ppeItem": "PPE item",
+  "lotNumber": "Lot number",
+  "expiryDate": "Expiry date",
+  "pickDate": "Pick date",
+  "receivedMsg": "{count} unit(s) received",
+  "@receivedMsg": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseRequest": "Purchase request",
+  "filterLowStock": "Low stock only",
+  "stockMovements": "Movements",
+  "noLots": "No lots",
+  "purchaseRequestsTitle": "Purchase requests",
+  "newPurchaseRequest": "New purchase request",
+  "prStatusPending": "Pending",
+  "prStatusApproved": "Approved",
+  "prStatusOrdered": "Ordered",
+  "prStatusReceived": "Received",
+  "prStatusRejected": "Rejected",
+  "markAs": "Mark {status}",
+  "@markAs": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "receiveIntoStock": "Receive into stock",
+  "noPurchaseRequests": "No purchase requests",
+  "scanTitle": "Scan QR",
+  "scanHint": "Point the camera at the employee's pickup QR",
+  "manualEntry": "Enter code manually",
+  "qrCode": "QR code",
+  "verify": "Verify",
+  "openRequest": "Open request",
+  "cameraUnavailable": "Camera not available. Enter the code manually.",
+  "markAllRead": "Mark all as read",
+  "noNotifications": "No notifications",
+  "markUnread": "Mark as unread",
+  "markRead": "Mark as read",
+  "notifNewRequisition": "New request {no}",
+  "@notifNewRequisition": {
+    "placeholders": {
+      "no": {
+        "type": "String"
+      }
+    }
+  },
+  "notifApprovalResult": "{no}: {status}",
+  "@notifApprovalResult": {
+    "placeholders": {
+      "no": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "notifReady": "{no} is ready for pickup",
+  "@notifReady": {
+    "placeholders": {
+      "no": {
+        "type": "String"
+      }
+    }
+  },
+  "notifReorder": "Low stock: {code}",
+  "@notifReorder": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "notifInfoRequested": "Message about {no}",
+  "@notifInfoRequested": {
+    "placeholders": {
+      "no": {
+        "type": "String"
+      }
+    }
+  },
+  "notifIssued": "{no} issued",
+  "@notifIssued": {
+    "placeholders": {
+      "no": {
+        "type": "String"
+      }
+    }
+  },
+  "notifOnHold": "{no} is waiting for stock",
+  "@notifOnHold": {
+    "placeholders": {
+      "no": {
+        "type": "String"
+      }
+    }
+  },
+  "pushReceived": "New notification",
+  "language": "Language",
+  "biometricLock": "Biometric lock",
+  "biometricLockSub": "Require fingerprint / face to open the app",
+  "changePassword": "Change password",
+  "currentPassword": "Current password",
+  "newPassword": "New password",
+  "passwordChanged": "Password changed",
+  "editProfile": "Edit profile",
+  "profileSaved": "Profile saved",
+  "syncQueue": "Offline queue",
+  "syncQueueEmpty": "Everything is synced",
+  "syncPending": "Waiting",
+  "syncSyncing": "Sending…",
+  "syncFailed": "Failed",
+  "syncedCount": "{count} request(s) sent",
+  "@syncedCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "logout": "Sign out",
+  "logoutConfirm": "Sign out of this device?",
+  "tools": "Tools",
+  "settings": "Settings",
+  "version": "Version {version}",
+  "@version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "myPpeTitle": "My PPE",
+  "noIssuedItems": "You have no PPE on record",
+  "issuedOn": "Received {date}",
+  "@issuedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "replaceFrom": "Replace from {date}",
+  "@replaceFrom": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "replacementDueNow": "Replacement due",
+  "supervisor": "Supervisor",
+  "usersTitle": "Users",
+  "searchUsers": "Search name, ID or department",
+  "role": "Role",
+  "activeUser": "Active",
+  "userUpdated": "User updated",
+  "supervisorIdOptional": "Supervisor user ID (optional)",
+  "auditTitle": "Audit log",
+  "searchAudit": "Search employee or record ID",
+  "noAuditEntries": "No audit entries",
+  "noUsers": "No users found",
+  "analyticsTitle": "Analytics",
+  "requestPipeline": "Request pipeline",
+  "stockHealth": "Stock health",
+  "stockHealthBody": "{low} of {total} items at or below reorder point",
+  "@stockHealthBody": {
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  }
+}

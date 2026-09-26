@@ -1,19 +1,67 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ppe_mobile_app/app/app.dart';
+import 'package:ppe_mobile_app/core/storage/local_store.dart';
+import 'package:ppe_mobile_app/core/storage/secure_storage_service.dart';
+import 'package:ppe_mobile_app/shared/providers/core_providers.dart';
 
-import 'package:ppe_mobile_app/main.dart';
+Widget buildApp({String locale = 'EN'}) {
+  final store = MemoryLocalStore()..values[StoreKeys.locale] = locale;
+  return ProviderScope(
+    retry: (_, _) => null,
+    overrides: [
+      localStoreProvider.overrideWithValue(store),
+      tokenStorageProvider.overrideWithValue(MemoryTokenStorage()),
+    ],
+    child: const PPEApp(),
+  );
+}
 
 void main() {
-  testWidgets('PPE app loads login screen', (WidgetTester tester) async {
-    await tester.pumpWidget(const PPEApp());
+  testWidgets('signed-out user lands on the login screen', (tester) async {
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
 
-    expect(find.text('PPE Management'), findsOneWidget);
-    expect(find.text('เข้าสู่ระบบ'), findsNWidgets(2));
+    expect(find.text('PPE SMART'), findsWidgets);
+    expect(find.byKey(const Key('login_employee_id')), findsOneWidget);
+    expect(find.byKey(const Key('login_password')), findsOneWidget);
+  });
+
+  testWidgets('login form validates required fields', (tester) async {
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('login_submit')));
+    await tester.pump();
+
+    expect(find.text('Required'), findsNWidgets(2));
+  });
+
+  testWidgets('demo account chip fills the credentials', (tester) async {
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('SUP001'));
+    await tester.tap(find.text('SUP001'));
+    await tester.pump();
+
+    final field = tester.widget<TextFormField>(find.byKey(const Key('login_employee_id')));
+    expect(field.controller!.text, 'SUP001');
+  });
+
+  testWidgets('UI is localized to Thai, Myanmar and Chinese', (tester) async {
+    await tester.pumpWidget(buildApp(locale: 'TH'));
+    await tester.pumpAndSettle();
+    expect(find.text('รหัสพนักงาน'), findsOneWidget);
+
+    await tester.pumpWidget(buildApp(locale: 'MY'));
+    await tester.pumpAndSettle();
+    expect(find.text('ဝန်ထမ်း ID'), findsOneWidget);
+
+    await tester.pumpWidget(buildApp(locale: 'ZH'));
+    await tester.pumpAndSettle();
+    expect(find.text('工号'), findsOneWidget);
+    expect(find.text('登录'), findsWidgets);
   });
 }
