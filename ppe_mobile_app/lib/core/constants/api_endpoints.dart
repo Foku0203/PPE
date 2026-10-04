@@ -4,12 +4,14 @@ class ApiEndpoints {
   static const login = '/auth/token/';
   static const refresh = '/auth/token/refresh/';
   static const register = '/auth/register/';
+  static const supervisors = '/auth/supervisors/';
   static const logout = '/auth/logout/';
   static const me = '/me/';
   static const changePassword = '/me/password/';
   static const myIssuedItems = '/me/issued-items/';
   static const users = '/users/';
   static String user(int id) => '/users/$id/';
+  static String transferTeam(int id) => '/users/$id/transfer-team/';
   static const deviceToken = '/devices/token/';
 
   // Notifications

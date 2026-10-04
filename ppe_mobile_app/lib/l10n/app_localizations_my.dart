@@ -107,7 +107,7 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get errSpecialReasonRequired =>
-      'သက်တမ်းမပြည့်မီ သို့မဟုတ် ခွဲတမ်းထက်ပို၍ တောင်းခံရသည့် အကြောင်းရင်း ဖော်ပြပါ။';
+      'အထူးအတည်ပြုချက်အတွက် အကြောင်းရင်း ဖော်ပြပါ။';
 
   @override
   String get errSizeRequired => 'ပစ္စည်းတိုင်းအတွက် အရွယ်အစား ရွေးပါ။';
@@ -191,6 +191,12 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get supervisorEmployeeId => 'ကြီးကြပ်သူ၏ ဝန်ထမ်း ID';
+
+  @override
+  String get selectSupervisor => 'သင်၏ ကြီးကြပ်သူ';
+
+  @override
+  String get searchSupervisor => 'ရွေးရန် နှိပ်ပါ သို့မဟုတ် အမည်/ID ရိုက်ရှာပါ';
 
   @override
   String get confirmPassword => 'စကားဝှက် အတည်ပြုပါ';
@@ -562,8 +568,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get specialReasonLabel => 'အထူးအတည်ပြုချက်အတွက် အကြောင်းပြချက်';
 
   @override
-  String get specialReasonHint =>
-      'စောစီးစွာ သို့မဟုတ် ခွဲတမ်းထက်ပို၍ လိုအပ်ရသည့် အကြောင်းကို ရှင်းပြပါ';
+  String get specialReasonHint => 'ဤပစ္စည်း လိုအပ်ရသည့် အကြောင်းကို ရှင်းပြပါ';
 
   @override
   String get submitRequest => 'တောင်းခံမှု တင်သွင်းမည်';
@@ -586,6 +591,10 @@ class AppLocalizationsMy extends AppLocalizations {
   String lifespanNotExpiredLine(String date) {
     return '$date အထိ အချိန်မရောက်သေး – အထူးအတည်ပြုချက်';
   }
+
+  @override
+  String get specialItemLine =>
+      'ပြုတ်ကျမှုကာကွယ်ရေး – အမြဲ အထူးအတည်ပြုချက် လိုအပ်သည်';
 
   @override
   String stockLine(String count) {
@@ -1167,6 +1176,29 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get userUpdated => 'အသုံးပြုသူ ပြင်ဆင်ပြီး';
+
+  @override
+  String transferTeam(int count) {
+    return 'အဖွဲ့ ($count ဦး) ကို ကြီးကြပ်သူအသစ်ထံ လွှဲမည်';
+  }
+
+  @override
+  String transferTeamTo(String name) {
+    return '$name ၏ အဖွဲ့အတွက် ကြီးကြပ်သူအသစ်';
+  }
+
+  @override
+  String transferTeamDone(int count) {
+    return '$count ဦးကို ကြီးကြပ်သူအသစ်ထံ လွှဲပြီး';
+  }
+
+  @override
+  String get errTeamNotEmpty =>
+      'ဤကြီးကြပ်သူတွင် အဖွဲ့ဝင်များ ရှိနေသေးသည်။ အဖွဲ့ကို အခြားကြီးကြပ်သူထံ အရင်လွှဲပါ။';
+
+  @override
+  String get noOtherSupervisor =>
+      'အခြား ကြီးကြပ်သူ မရှိသေးပါ။ ကြီးကြပ်သူ အရင်ဖန်တီးပါ။';
 
   @override
   String get supervisorIdOptional => 'ကြီးကြပ်သူ ID (ရွေးချယ်နိုင်)';

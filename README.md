@@ -74,6 +74,28 @@ cd ppe_mobile_app; flutter analyze; flutter test                # 26 tests
 
 CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) รัน backend tests, flutter analyze/test และ E2E (แอป ↔ Django จริง)
 
+## คำแปล 4 ภาษา และการตรวจด้วย LLM
+
+ข้อความในแอปอยู่ใน `ppe_mobile_app/lib/l10n/app_<th|en|my|zh>.arb` (ภาษาอังกฤษเป็นต้นแบบ) ขั้นตอนเมื่อแก้คำแปลมีดังนี้
+
+1. **แก้ไฟล์ `.arb`**
+2. **ตรวจคำแปลด้วย LLM (ไม่บังคับ)** สคริปต์ [`ppe_mobile_app/tool/review_translations.py`](ppe_mobile_app/tool/review_translations.py) ส่งคำแปลภาษาไทย พม่า และจีน พร้อมต้นฉบับภาษาอังกฤษ ให้ Claude (`claude-opus-5-5`) ตรวจ 5 เรื่อง ได้แก่ ความหมาย ไวยากรณ์ คำศัพท์ด้านความปลอดภัย/PPE ระดับภาษา และ placeholder ผลลัพธ์เป็นรายงาน `docs/translation-review.md`
+   - สคริปต์**ไม่แก้ไฟล์ `.arb` เอง** ให้คนอ่านรายงานแล้วเลือกแก้ด้วยมือ
+   - ภาษาพม่าควรให้เจ้าของภาษาตรวจซ้ำ เพราะ LLM แม่นภาษาพม่าน้อยกว่าภาษาอื่น
+   - มีค่าใช้จ่าย API ทุกครั้งที่รัน และข้อความในแอปจะถูกส่งไปยัง Anthropic
+3. **`flutter gen-l10n`** สร้างโค้ด Dart (`app_localizations*.dart`) จากไฟล์ `.arb`
+4. **`flutter test`** ตรวจว่าทุกภาษามี key และ placeholder ครบตรงกัน
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install anthropic pydantic       # ครั้งแรก
+$env:ANTHROPIC_API_KEY = "sk-ant-..."
+.\.venv\Scripts\python.exe ppe_mobile_app\tool\review_translations.py --dry-run     # ดูขนาดข้อมูล ไม่เรียก API
+.\.venv\Scripts\python.exe ppe_mobile_app\tool\review_translations.py               # ตรวจ th, my, zh
+.\.venv\Scripts\python.exe ppe_mobile_app\tool\review_translations.py --langs th    # ตรวจบางภาษา
+```
+
+LLM ใช้เฉพาะตอนพัฒนาเพื่อตรวจคำแปล ตัวแอปและ backend ไม่ได้เรียก LLM ตอนใช้งานจริง
+
 ## โครงสร้างโปรเจกต์
 
 ```text
@@ -84,7 +106,8 @@ PPE/
 │   ├── lib/core/         network (Dio + JWT refresh), storage, errors
 │   ├── lib/features/     หน้าจอแยกตามโมดูล (auth, home, catalog, requisitions, approval, inventory, …)
 │   ├── lib/shared/       models, providers, widgets กลาง
-│   └── lib/l10n/         คำแปล 4 ภาษา (.arb)
+│   ├── lib/l10n/         คำแปล 4 ภาษา (.arb)
+│   └── tool/             สคริปต์ตรวจคำแปลด้วย LLM (review_translations.py)
 ├── docs/                 SRS, proposal, workflow, catalog, traceability, architecture, status
 ├── image/                ไฟล์ต้นฉบับรูปแบนเนอร์/ไอคอน
 ├── start_public.ps1/.bat เปิดระบบให้คนภายนอกเข้าผ่านลิงก์/QR
@@ -92,3 +115,12 @@ PPE/
 ```
 
 เอกสารเพิ่มเติม: [API และ backend](backend/backend_README.md) · [แอป Flutter](ppe_mobile_app/README.md) · [สถานะงาน](docs/07-implementation-status.md)
+
+
+# 1) build แอปเวอร์ชันเว็บใหม่ ทำเฉพาะตอนที่แก้โค้ด Flutter (ถ้าไม่ build ลิงก์จะยังเป็นแอปเวอร์ชันเก่า)
+cd D:\PPE\ppe_mobile_app
+flutter build web --release
+
+# 2) เปิดเซิร์ฟเวอร์ + ลิงก์สาธารณะ + QR code
+cd D:\PPE
+.\start_public.bat

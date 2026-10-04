@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/routes/app_routes.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/errors/app_exceptions.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/providers/core_providers.dart';
 import '../../../../shared/widgets/common_widgets.dart';
 import '../../../../shared/widgets/labels.dart';
@@ -28,6 +29,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _supervisor = TextEditingController();
   final _password = TextEditingController();
   final _confirm = TextEditingController();
+  String? _supervisorId;
+  bool _supervisorMissing = false;
+  AutovalidateMode _autovalidate = AutovalidateMode.disabled;
   bool _loading = false;
   Object? _error;
   Map<String, String> _fieldErrors = const {};
@@ -41,7 +45,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    final pickSupervisor = ref.read(supervisorOptionsProvider).value?.isNotEmpty ?? false;
+    setState(() {
+      _supervisorMissing = pickSupervisor && _supervisorId == null;
+      // After the first attempt, re-check each field as it changes so fixed errors disappear.
+      _autovalidate = AutovalidateMode.onUserInteraction;
+    });
+    if (!_formKey.currentState!.validate() || _supervisorMissing) return;
     setState(() {
       _loading = true;
       _error = null;
@@ -54,7 +64,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             password: _password.text,
             department: _department.text,
             phoneNumber: _phone.text,
-            supervisorEmployeeId: _supervisor.text,
+            supervisorEmployeeId: _supervisorId ?? _supervisor.text,
             locale: ref.read(settingsProvider).language.apiCode,
           ));
     } catch (e) {
@@ -67,6 +77,44 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  /// Pick-or-search list of supervisors; falls back to typing the ID if the list cannot be loaded.
+  List<Widget> _supervisorField(AppLocalizations l, InputDecoration Function(String, IconData, String, {bool optional}) deco) {
+    final options = ref.watch(supervisorOptionsProvider);
+    if (options.isLoading) return const [LinearProgressIndicator(), SizedBox(height: 12)];
+    final supervisors = options.value;
+    if (supervisors == null) {
+      return [
+        TextFormField(
+          controller: _supervisor,
+          textCapitalization: TextCapitalization.characters,
+          decoration: deco(l.supervisorEmployeeId, Icons.supervisor_account_outlined, 'supervisor_employee_id'),
+          validator: (v) => v == null || v.trim().isEmpty ? l.fieldRequired : null,
+        ),
+        const SizedBox(height: 12),
+      ];
+    }
+    if (supervisors.isEmpty) return const [];
+    return [
+      DropdownMenu<String>(
+        controller: _supervisor,
+        expandedInsets: EdgeInsets.zero,
+        enableFilter: true,
+        requestFocusOnTap: true,
+        menuHeight: 320,
+        label: Text(l.selectSupervisor),
+        hintText: l.searchSupervisor,
+        leadingIcon: const Icon(Icons.supervisor_account_outlined),
+        errorText: _supervisorMissing ? l.fieldRequired : _fieldErrors['supervisor_employee_id'],
+        dropdownMenuEntries: [for (final s in supervisors) DropdownMenuEntry(value: s.employeeId, label: s.label)],
+        onSelected: (id) => setState(() {
+          _supervisorId = id;
+          if (id != null) _supervisorMissing = false;
+        }),
+      ),
+      const SizedBox(height: 12),
+    ];
   }
 
   @override
@@ -93,6 +141,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               constraints: const BoxConstraints(maxWidth: 480),
               child: Form(
                 key: _formKey,
+                autovalidateMode: _autovalidate,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                   InfoBanner(message: l.registerNote, color: AppColors.info),
                   const SizedBox(height: 16),
@@ -117,12 +166,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     decoration: deco(l.phoneNumber, Icons.phone_outlined, 'phone_number', optional: true),
                   ),
                   const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _supervisor,
-                    textCapitalization: TextCapitalization.characters,
-                    decoration: deco(l.supervisorEmployeeId, Icons.supervisor_account_outlined, 'supervisor_employee_id', optional: true),
-                  ),
-                  const SizedBox(height: 12),
+                  ..._supervisorField(l, deco),
                   TextFormField(
                     controller: _password,
                     obscureText: true,

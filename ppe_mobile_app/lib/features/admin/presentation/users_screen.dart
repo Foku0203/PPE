@@ -100,6 +100,17 @@ class _UsersScreenState extends ConsumerState<UsersScreen> {
         builder: (context, setState) => AlertDialog(
           title: Text('${user.displayName} (${user.employeeId})'),
           content: Column(mainAxisSize: MainAxisSize.min, children: [
+            if (user.role == UserRole.supervisor && user.teamSize > 0) ...[
+              OutlinedButton.icon(
+                icon: const Icon(Icons.group_outlined),
+                label: Text(l.transferTeam(user.teamSize)),
+                onPressed: () {
+                  Navigator.pop(context, false);
+                  _transferTeam(this.context, user, candidates.where((c) => c.role == UserRole.supervisor).toList(), query);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
             DropdownButtonFormField<UserRole>(
               initialValue: role,
               decoration: InputDecoration(labelText: l.role),
@@ -138,6 +149,34 @@ class _UsersScreenState extends ConsumerState<UsersScreen> {
     if (result != null && context.mounted) {
       ref.invalidate(usersProvider(query));
       showSuccess(context, l.userUpdated);
+    }
+  }
+
+  /// A supervisor moves or leaves: hand the whole team to another supervisor in one step.
+  Future<void> _transferTeam(BuildContext context, AppUser from, List<AppUser> supervisors, ({String search, UserRole? role}) query) async {
+    final l = context.l10n;
+    if (supervisors.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.noOtherSupervisor), backgroundColor: AppColors.danger));
+      return;
+    }
+    final target = await showDialog<AppUser>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l.transferTeamTo(from.displayName)),
+        children: [
+          for (final s in supervisors)
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, s),
+              child: Text([s.displayName, s.employeeId, if (s.department.isNotEmpty) s.department].join(' · ')),
+            ),
+        ],
+      ),
+    );
+    if (target == null || !context.mounted) return;
+    final moved = await runWithProgress(context, () => ref.read(adminRepositoryProvider).transferTeam(from.id, target.id));
+    if (moved != null && context.mounted) {
+      ref.invalidate(usersProvider(query));
+      showSuccess(context, l.transferTeamDone(moved));
     }
   }
 }

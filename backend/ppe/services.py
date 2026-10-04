@@ -5,7 +5,7 @@ from datetime import timedelta
 from uuid import uuid4
 
 from django.db import transaction
-from django.db.models import F, Q, Sum
+from django.db.models import Exists, F, OuterRef, Q, Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
@@ -112,12 +112,13 @@ def evaluate_line(requester: User, ppe_item: PpeItem, quantity: int, now=None) -
     eligible_at = previous.created_at + timedelta(days=ppe_item.lifespan_days) if previous and ppe_item.lifespan_days else None
     lifespan_blocked = bool(eligible_at and eligible_at > now)
     quota_blocked = ppe_item.quota is not None and quantity > ppe_item.quota
+    always_special = ppe_item.always_special_approval
     return {
-        'allowed': not lifespan_blocked and not quota_blocked,
-        'special_approval_required': lifespan_blocked or quota_blocked,
+        'allowed': not lifespan_blocked and not quota_blocked and not always_special,
+        'special_approval_required': lifespan_blocked or quota_blocked or always_special,
         'eligible_at': eligible_at,
         'last_issued_at': previous.created_at if previous else None,
-        'reason': 'LIFESPAN_NOT_EXPIRED' if lifespan_blocked else 'QUOTA_EXCEEDED' if quota_blocked else None,
+        'reason': 'LIFESPAN_NOT_EXPIRED' if lifespan_blocked else 'QUOTA_EXCEEDED' if quota_blocked else 'SPECIAL_ITEM' if always_special else None,
     }
 
 
@@ -149,7 +150,7 @@ def create_requisition(*, requester: User, client_request_id: str, items: list[d
             checked.append((item, ppe_item, result))
         special = any(result['special_approval_required'] for _, _, result in checked)
         if special and not special_reason.strip():
-            raise BusinessRuleError('SPECIAL_REASON_REQUIRED', 'A justification is required for early replacement or quantity above quota.', 400,
+            raise BusinessRuleError('SPECIAL_REASON_REQUIRED', 'A justification is required for special approval.', 400,
                                     {'lines': [{'ppe_item_id': p.id, 'reason': r['reason']} for _, p, r in checked if r['special_approval_required']]})
         requisition = Requisition.objects.create(
             request_no=f'PR-{timezone.now():%y%m%d}-{uuid4().hex[:6].upper()}', requester=requester,
@@ -159,9 +160,8 @@ def create_requisition(*, requester: User, client_request_id: str, items: list[d
         for item, ppe_item, result in checked:
             requisition.items.create(ppe_item=ppe_item, size=item.get('size', ''), quantity=item['quantity'], reason=item['reason'], eligible_at=result.get('eligible_at'))
         audit(actor=requester, action='CREATE', entity='Requisition', entity_id=requisition.pk, after={'status': requisition.status, 'items': len(checked)}, request_id=client_request_id)
-        recipients = [requester.supervisor] if requester.supervisor_id else []
-        if special or not requester.supervisor_id:
-            recipients += _users_with_roles([Role.EHS, Role.ADMIN])
+        # EHS hears about a special request once the supervisor step is done (see approve_requisition).
+        recipients = [requester.supervisor] if requester.supervisor_id else _users_with_roles([Role.ADMIN] if special else [Role.EHS, Role.ADMIN])
         notify_users(users=recipients, notification_type=NotificationType.NEW_REQUISITION, title=f'New requisition {requisition.request_no}',
                      message=f'{requester.display_name} submitted a PPE requisition.', payload=_requisition_payload(requisition))
         return requisition
@@ -179,14 +179,14 @@ def approval_kind_for(requisition: Requisition, approver: User) -> str | None:
     approvals = {a.kind: a for a in requisition.approvals.all() if a.decision == ApprovalDecision.APPROVED}
     if not requisition.special_approval_needed:
         return ApprovalKind.NORMAL
-    if approver.role == Role.SUPERVISOR:
-        return None if ApprovalKind.SPECIAL_SUPERVISOR in approvals else ApprovalKind.SPECIAL_SUPERVISOR
-    if ApprovalKind.SPECIAL_EHS not in approvals:
-        return ApprovalKind.SPECIAL_EHS
-    # An Admin may fill the supervisor slot (e.g. requester without supervisor) but never both slots.
-    if approver.role == Role.ADMIN and ApprovalKind.SPECIAL_SUPERVISOR not in approvals and approvals[ApprovalKind.SPECIAL_EHS].approver_id != approver.id:
-        return ApprovalKind.SPECIAL_SUPERVISOR
-    return None
+    # Special requests go Supervisor first, then EHS (docs/03-workflow.md §3).
+    if ApprovalKind.SPECIAL_SUPERVISOR not in approvals:
+        # An Admin may fill the supervisor slot (e.g. requester without supervisor).
+        return ApprovalKind.SPECIAL_SUPERVISOR if approver.role in (Role.SUPERVISOR, Role.ADMIN) else None
+    # ...but the same person never fills both slots.
+    if approver.role == Role.SUPERVISOR or ApprovalKind.SPECIAL_EHS in approvals or approvals[ApprovalKind.SPECIAL_SUPERVISOR].approver_id == approver.id:
+        return None
+    return ApprovalKind.SPECIAL_EHS
 
 
 def approve_requisition(*, requisition: Requisition, approver: User, decision: str, reason: str = '') -> Requisition:
@@ -477,8 +477,11 @@ def approval_inbox(user: User):
     if user.role == Role.SUPERVISOR:
         return base.filter(requester__supervisor=user).exclude(approvals__kind=ApprovalKind.SPECIAL_SUPERVISOR, approvals__decision=ApprovalDecision.APPROVED)
     if user.role == Role.EHS:
-        return base.filter(Q(special_approval_needed=True) | Q(requester__supervisor__isnull=True)).exclude(
-            approvals__kind=ApprovalKind.SPECIAL_EHS, approvals__decision=ApprovalDecision.APPROVED)
+        approved = Approval.objects.filter(requisition=OuterRef('pk'), decision=ApprovalDecision.APPROVED)
+        # Special requests reach EHS only after the supervisor step.
+        return base.filter(Q(special_approval_needed=True) | Q(requester__supervisor__isnull=True)).filter(
+            Q(special_approval_needed=False) | Exists(approved.filter(kind=ApprovalKind.SPECIAL_SUPERVISOR))).exclude(
+            Exists(approved.filter(kind=ApprovalKind.SPECIAL_EHS)))
     if user.role == Role.ADMIN:
         return base
     return base.none()

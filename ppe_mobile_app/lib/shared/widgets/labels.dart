@@ -128,6 +128,7 @@ extension Labels on AppLocalizations {
         'ITEM_INACTIVE' => errItemInactive,
         'DUPLICATE_LINE' => errDuplicateLine,
         'EXPIRED_STOCK' => errExpiredStock,
+        'TEAM_NOT_EMPTY' => errTeamNotEmpty,
         _ => null,
       };
       if (mapped != null) return mapped;

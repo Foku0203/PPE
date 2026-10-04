@@ -291,7 +291,7 @@ abstract class AppLocalizations {
   /// No description provided for @errSpecialReasonRequired.
   ///
   /// In en, this message translates to:
-  /// **'Please give a reason for early replacement or quantity above quota.'**
+  /// **'Please give a reason for special approval.'**
   String get errSpecialReasonRequired;
 
   /// No description provided for @errSizeRequired.
@@ -449,6 +449,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Supervisor Employee ID'**
   String get supervisorEmployeeId;
+
+  /// No description provided for @selectSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Your supervisor'**
+  String get selectSupervisor;
+
+  /// No description provided for @searchSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to choose, or type a name or ID'**
+  String get searchSupervisor;
 
   /// No description provided for @confirmPassword.
   ///
@@ -1143,7 +1155,7 @@ abstract class AppLocalizations {
   /// No description provided for @specialReasonHint.
   ///
   /// In en, this message translates to:
-  /// **'Explain why you need it early or above quota'**
+  /// **'Explain why you need this item'**
   String get specialReasonHint;
 
   /// No description provided for @submitRequest.
@@ -1175,6 +1187,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not due until {date} – special approval'**
   String lifespanNotExpiredLine(String date);
+
+  /// No description provided for @specialItemLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Fall protection – always needs special approval'**
+  String get specialItemLine;
 
   /// No description provided for @stockLine.
   ///
@@ -2249,6 +2267,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User updated'**
   String get userUpdated;
+
+  /// No description provided for @transferTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Move team ({count} people) to new supervisor'**
+  String transferTeam(int count);
+
+  /// No description provided for @transferTeamTo.
+  ///
+  /// In en, this message translates to:
+  /// **'New supervisor for {name}\'s team'**
+  String transferTeamTo(String name);
+
+  /// No description provided for @transferTeamDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved {count} people to the new supervisor'**
+  String transferTeamDone(int count);
+
+  /// No description provided for @errTeamNotEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This supervisor still has a team. Move the team to another supervisor first.'**
+  String get errTeamNotEmpty;
+
+  /// No description provided for @noOtherSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'No other active supervisor yet. Create or promote one first.'**
+  String get noOtherSupervisor;
 
   /// No description provided for @supervisorIdOptional.
   ///

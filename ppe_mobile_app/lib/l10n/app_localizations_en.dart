@@ -107,7 +107,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errSpecialReasonRequired =>
-      'Please give a reason for early replacement or quantity above quota.';
+      'Please give a reason for special approval.';
 
   @override
   String get errSizeRequired => 'Please select a size for every item.';
@@ -190,6 +190,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get supervisorEmployeeId => 'Supervisor Employee ID';
+
+  @override
+  String get selectSupervisor => 'Your supervisor';
+
+  @override
+  String get searchSupervisor => 'Tap to choose, or type a name or ID';
 
   @override
   String get confirmPassword => 'Confirm password';
@@ -560,8 +566,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get specialReasonLabel => 'Justification for special approval';
 
   @override
-  String get specialReasonHint =>
-      'Explain why you need it early or above quota';
+  String get specialReasonHint => 'Explain why you need this item';
 
   @override
   String get submitRequest => 'Submit request';
@@ -584,6 +589,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String lifespanNotExpiredLine(String date) {
     return 'Not due until $date – special approval';
   }
+
+  @override
+  String get specialItemLine =>
+      'Fall protection – always needs special approval';
 
   @override
   String stockLine(String count) {
@@ -1164,6 +1173,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userUpdated => 'User updated';
+
+  @override
+  String transferTeam(int count) {
+    return 'Move team ($count people) to new supervisor';
+  }
+
+  @override
+  String transferTeamTo(String name) {
+    return 'New supervisor for $name\'s team';
+  }
+
+  @override
+  String transferTeamDone(int count) {
+    return 'Moved $count people to the new supervisor';
+  }
+
+  @override
+  String get errTeamNotEmpty =>
+      'This supervisor still has a team. Move the team to another supervisor first.';
+
+  @override
+  String get noOtherSupervisor =>
+      'No other active supervisor yet. Create or promote one first.';
 
   @override
   String get supervisorIdOptional => 'Supervisor user ID (optional)';

@@ -21,6 +21,10 @@ class AdminRepository {
   Future<AppUser> updateUser(int id, Map<String, dynamic> changes) async =>
       AppUser.fromJson(Map<String, dynamic>.from(await _api.patch(ApiEndpoints.user(id), data: changes) as Map));
 
+  /// Admin only: move every member of [fromSupervisorId]'s team to [toSupervisorId]. Returns how many moved.
+  Future<int> transferTeam(int fromSupervisorId, int toSupervisorId) async =>
+      ((await _api.post(ApiEndpoints.transferTeam(fromSupervisorId), data: {'to_supervisor': toSupervisorId}) as Map)['moved'] as num).toInt();
+
   Future<List<AuditEntry>> auditLogs({String? search, String? entity}) async =>
       (await _api.getList(ApiEndpoints.auditLogs, query: {'search': search, 'entity': entity, 'page_size': AppConfig.pageSize}))
           .map(AuditEntry.fromJson)

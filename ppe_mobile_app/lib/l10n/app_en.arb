@@ -31,7 +31,7 @@
   "errorValidation": "Please check the highlighted fields.",
   "errInvalidCredentials": "Invalid Employee ID or password.",
   "errActiveRequestExists": "You already have an open request for this item.",
-  "errSpecialReasonRequired": "Please give a reason for early replacement or quantity above quota.",
+  "errSpecialReasonRequired": "Please give a reason for special approval.",
   "errSizeRequired": "Please select a size for every item.",
   "errInsufficientStock": "Not enough stock.",
   "errSerialMismatch": "Scanned serial numbers don't match the reserved units.",
@@ -58,6 +58,8 @@
   "department": "Department",
   "phoneNumber": "Phone number",
   "supervisorEmployeeId": "Supervisor Employee ID",
+  "selectSupervisor": "Your supervisor",
+  "searchSupervisor": "Tap to choose, or type a name or ID",
   "confirmPassword": "Confirm password",
   "passwordTooShort": "At least 8 characters",
   "passwordMismatch": "Passwords do not match",
@@ -255,7 +257,7 @@
   "reasonReturnScheduled": "Scheduled replacement",
   "reasonOther": "Other",
   "specialReasonLabel": "Justification for special approval",
-  "specialReasonHint": "Explain why you need it early or above quota",
+  "specialReasonHint": "Explain why you need this item",
   "submitRequest": "Submit request",
   "requestSubmitted": "Request {no} submitted",
   "@requestSubmitted": {
@@ -282,6 +284,7 @@
       }
     }
   },
+  "specialItemLine": "Fall protection – always needs special approval",
   "stockLine": "Stock: {count}",
   "@stockLine": {
     "placeholders": {
@@ -604,6 +607,14 @@
   "role": "Role",
   "activeUser": "Active",
   "userUpdated": "User updated",
+  "transferTeam": "Move team ({count} people) to new supervisor",
+  "@transferTeam": {"placeholders": {"count": {"type": "int"}}},
+  "transferTeamTo": "New supervisor for {name}'s team",
+  "@transferTeamTo": {"placeholders": {"name": {"type": "String"}}},
+  "transferTeamDone": "Moved {count} people to the new supervisor",
+  "@transferTeamDone": {"placeholders": {"count": {"type": "int"}}},
+  "errTeamNotEmpty": "This supervisor still has a team. Move the team to another supervisor first.",
+  "noOtherSupervisor": "No other active supervisor yet. Create or promote one first.",
   "supervisorIdOptional": "Supervisor user ID (optional)",
   "auditTitle": "Audit log",
   "searchAudit": "Search employee or record ID",

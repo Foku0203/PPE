@@ -35,7 +35,7 @@ class TranslationInline(admin.TabularInline):
 
 @admin.register(PpeItem)
 class PpeItemAdmin(admin.ModelAdmin):
-    list_display = ('code', 'category', 'unit', 'quota', 'lifespan_days', 'reorder_point', 'requires_serial', 'active')
+    list_display = ('code', 'category', 'unit', 'quota', 'lifespan_days', 'reorder_point', 'requires_serial', 'always_special_approval', 'active')
     list_filter = ('category', 'active')
     inlines = [TranslationInline]
 

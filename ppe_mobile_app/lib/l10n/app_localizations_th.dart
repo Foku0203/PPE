@@ -106,7 +106,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get errSpecialReasonRequired =>
-      'กรุณาระบุเหตุผลสำหรับการเบิกก่อนกำหนดหรือเกินโควต้า';
+      'กรุณาระบุเหตุผลประกอบการขออนุมัติพิเศษ';
 
   @override
   String get errSizeRequired => 'กรุณาเลือกขนาดให้ครบทุกรายการ';
@@ -186,6 +186,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get supervisorEmployeeId => 'รหัสพนักงานของหัวหน้างาน';
+
+  @override
+  String get selectSupervisor => 'หัวหน้างานของคุณ';
+
+  @override
+  String get searchSupervisor => 'แตะเพื่อเลือก หรือพิมพ์ชื่อ/รหัสเพื่อค้นหา';
 
   @override
   String get confirmPassword => 'ยืนยันรหัสผ่าน';
@@ -556,8 +562,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get specialReasonLabel => 'เหตุผลประกอบการขออนุมัติพิเศษ';
 
   @override
-  String get specialReasonHint =>
-      'อธิบายเหตุผลที่ต้องเบิกก่อนกำหนดหรือเกินโควต้า';
+  String get specialReasonHint => 'อธิบายเหตุผลที่ต้องใช้อุปกรณ์นี้';
 
   @override
   String get submitRequest => 'ส่งคำขอ';
@@ -580,6 +585,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String lifespanNotExpiredLine(String date) {
     return 'ยังไม่ถึงกำหนดเปลี่ยนจนถึง $date – ต้องอนุมัติพิเศษ';
   }
+
+  @override
+  String get specialItemLine => 'อุปกรณ์กันตก – ต้องอนุมัติพิเศษทุกครั้ง';
 
   @override
   String stockLine(String count) {
@@ -1157,6 +1165,29 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get userUpdated => 'อัปเดตผู้ใช้แล้ว';
+
+  @override
+  String transferTeam(int count) {
+    return 'ย้ายลูกทีม ($count คน) ไปหัวหน้าใหม่';
+  }
+
+  @override
+  String transferTeamTo(String name) {
+    return 'หัวหน้าใหม่ของทีม $name';
+  }
+
+  @override
+  String transferTeamDone(int count) {
+    return 'ย้าย $count คนไปหัวหน้าใหม่แล้ว';
+  }
+
+  @override
+  String get errTeamNotEmpty =>
+      'หัวหน้างานคนนี้ยังมีลูกทีมอยู่ ให้ย้ายลูกทีมไปหัวหน้าคนอื่นก่อน';
+
+  @override
+  String get noOtherSupervisor =>
+      'ยังไม่มีหัวหน้างานคนอื่นที่ใช้งานอยู่ ให้สร้างหรือเปลี่ยนสิทธิ์ผู้ใช้เป็นหัวหน้างานก่อน';
 
   @override
   String get supervisorIdOptional => 'รหัสผู้ใช้ของหัวหน้างาน (ไม่บังคับ)';

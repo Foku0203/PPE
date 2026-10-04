@@ -18,7 +18,7 @@ from .models import (
     StockLot,
     User,
 )
-from .services import approve_requisition, create_requisition, issue_requisition, receive_stock, reserve_and_prepare
+from .services import approval_inbox, approve_requisition, create_requisition, issue_requisition, receive_stock, reserve_and_prepare
 
 
 class BaseFixture(TestCase):
@@ -85,12 +85,28 @@ class PpeWorkflowTests(BaseFixture):
         self.assertEqual(ctx.exception.error_code, 'SPECIAL_REASON_REQUIRED')
         request = self.request(client_request_id='special-1', items=items, special_reason='Lost during rescue drill')
         self.assertEqual(request.status, RequisitionStatus.SPECIAL)
+        with self.assertRaises(BusinessRuleError):  # EHS waits for the supervisor step
+            approve_requisition(requisition=request, approver=self.ehs, decision=ApprovalDecision.APPROVED)
+        self.assertFalse(approval_inbox(self.ehs).filter(pk=request.pk).exists())
         approve_requisition(requisition=request, approver=self.supervisor, decision=ApprovalDecision.APPROVED)
         request.refresh_from_db()
         self.assertEqual(request.status, RequisitionStatus.SPECIAL)
+        self.assertTrue(approval_inbox(self.ehs).filter(pk=request.pk).exists())
         approve_requisition(requisition=request, approver=self.ehs, decision=ApprovalDecision.APPROVED)
         request.refresh_from_db()
         self.assertEqual(request.status, RequisitionStatus.APPROVED)
+
+    def test_always_special_item_needs_special_approval_for_any_role(self):
+        self.item.always_special_approval = True
+        self.item.save()
+        with self.assertRaises(BusinessRuleError) as ctx:
+            self.request(client_request_id='fall-0')
+        self.assertEqual(ctx.exception.error_code, 'SPECIAL_REASON_REQUIRED')
+        for requester in [self.worker, self.supervisor, self.ehs, self.store]:
+            request = self.request(requester=requester, client_request_id=f'fall-{requester.pk}', special_reason='Work at height')
+            self.assertEqual((request.status, request.special_approval_needed), (RequisitionStatus.SPECIAL, True))
+        gloves = self.request(client_request_id='fall-glv', items=[{'ppe_item_id': self.gloves.id, 'quantity': 1, 'reason': 'DAMAGED', 'size': 'M'}])
+        self.assertEqual(gloves.status, RequisitionStatus.PENDING)
 
     def test_lifespan_blocks_early_replacement(self):
         request = self.request(client_request_id='life-1')
@@ -185,6 +201,39 @@ class ApiTests(BaseFixture):
         duplicate = client.post('/api/v1/auth/register/', {'employee_id': 'EMP100', 'display_name': 'X', 'password': 'longpassword'}, format='json')
         self.assertEqual(duplicate.status_code, 400)
 
+    def test_admin_transfers_team_before_supervisor_leaves(self):
+        admin = self.client_for(self.admin)
+        request = self.request(client_request_id='move-1')
+        blocked = admin.patch(f'/api/v1/users/{self.supervisor.id}/', {'is_active': False}, format='json')
+        self.assertEqual(blocked.status_code, 400)
+        self.assertEqual(admin.patch(f'/api/v1/users/{self.supervisor.id}/', {'role': 'WORKER'}, format='json').status_code, 400)
+        self.assertEqual(self.client_for(self.ehs).post(f'/api/v1/users/{self.supervisor.id}/transfer-team/', {'to_supervisor': self.other_supervisor.id}).status_code, 403)
+        self.assertEqual(admin.post(f'/api/v1/users/{self.supervisor.id}/transfer-team/', {'to_supervisor': self.ehs.id}).status_code, 400)
+        moved = admin.post(f'/api/v1/users/{self.supervisor.id}/transfer-team/', {'to_supervisor': self.other_supervisor.id}, format='json')
+        self.assertEqual(moved.data['moved'], 1)
+        self.worker.refresh_from_db()
+        self.assertEqual(self.worker.supervisor, self.other_supervisor)
+        self.assertTrue(approval_inbox(self.other_supervisor).filter(pk=request.pk).exists())
+        self.assertEqual(admin.patch(f'/api/v1/users/{self.supervisor.id}/', {'is_active': False}, format='json').status_code, 200)
+
+    def test_supervisor_sees_issued_items_of_own_team_only(self):
+        url = '/api/v1/me/issued-items/?user_id={}'
+        self.assertEqual(self.client_for(self.supervisor).get(url.format(self.worker.id)).status_code, 200)
+        self.assertEqual(self.client_for(self.supervisor).get(url.format(self.worker2.id)).status_code, 404)
+        self.assertEqual(self.client_for(self.store).get(url.format(self.worker2.id)).status_code, 200)
+
+    def test_register_requires_supervisor_from_public_list(self):
+        client = APIClient()
+        options = client.get('/api/v1/auth/supervisors/')
+        self.assertEqual(options.status_code, 200)
+        self.assertIn('SUP001', [o['employee_id'] for o in options.data])
+        self.assertNotIn('EHS001', [o['employee_id'] for o in options.data])
+        missing = client.post('/api/v1/auth/register/', {'employee_id': 'EMP200', 'display_name': 'N', 'password': 'longpassword'}, format='json')
+        self.assertEqual(missing.status_code, 400)
+        not_supervisor = client.post('/api/v1/auth/register/', {'employee_id': 'EMP200', 'display_name': 'N', 'password': 'longpassword',
+                                                               'supervisor_employee_id': self.ehs.employee_id}, format='json')
+        self.assertEqual(not_supervisor.status_code, 400)
+
     def test_catalog_localized_and_eligibility(self):
         response = self.client_for(self.worker).get('/api/v1/catalog/ppe/?locale=TH')
         self.assertEqual(response.status_code, 200)
@@ -250,6 +299,8 @@ class ApiTests(BaseFixture):
         self.assertTrue(token.startswith('PPE1:'))
         resolved = store.post('/api/v1/inventory/scan/resolve/', {'token': token}, format='json')
         self.assertEqual(resolved.data['requisition_id'], request.id)
+        wrong = store.post(f'/api/v1/requisitions/{request.id}/issue/', {'qr_token': token, 'serial_numbers': ['WRONG']}, format='json')
+        self.assertEqual(wrong.data['error']['code'], 'SERIAL_MISMATCH')  # QR must survive a failed issue
         issued = store.post(f'/api/v1/requisitions/{request.id}/issue/', {'qr_token': token, 'serial_numbers': ['HAR-001']}, format='json')
         self.assertEqual(issued.status_code, 200, issued.data)
         self.assertEqual(issued.data['status'], RequisitionStatus.COMPLETED)

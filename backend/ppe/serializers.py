@@ -4,6 +4,8 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework import serializers
 
+from .exceptions import BusinessRuleError
+
 from .models import (
     Approval,
     AuditLog,
@@ -62,8 +64,22 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserAdminSerializer(UserSerializer):
+    team_size = serializers.SerializerMethodField()
+
     class Meta(UserSerializer.Meta):
-        read_only_fields = ['id', 'employee_id', 'username', 'permissions']
+        fields = UserSerializer.Meta.fields + ['team_size']
+        read_only_fields = ['id', 'employee_id', 'username', 'permissions', 'team_size']
+
+    def get_team_size(self, user):
+        return user.team_members.filter(is_active=True).count()
+
+    def validate(self, attrs):
+        # A supervisor who leaves the role or is deactivated would strand the team's requests; move the team first.
+        user = self.instance
+        leaving = attrs.get('is_active') is False or attrs.get('role', getattr(user, 'role', None)) != Role.SUPERVISOR
+        if user and user.role == Role.SUPERVISOR and leaving and user.team_members.filter(is_active=True).exists():
+            raise BusinessRuleError('TEAM_NOT_EMPTY', 'Move this supervisor\'s team to another supervisor first.', 400)
+        return attrs
 
     def validate_supervisor(self, supervisor):
         if supervisor and supervisor.role not in [Role.SUPERVISOR, Role.EHS, Role.ADMIN]:
@@ -92,10 +108,17 @@ class RegisterSerializer(serializers.Serializer):
         value = (value or '').strip().upper()
         if not value:
             return None
-        supervisor = User.objects.filter(employee_id=value, is_active=True, role__in=[Role.SUPERVISOR, Role.EHS, Role.ADMIN]).first()
+        # Only the Supervisor role: approval_inbox routes a worker's requests by requester__supervisor for supervisors alone.
+        supervisor = User.objects.filter(employee_id=value, is_active=True, role=Role.SUPERVISOR).first()
         if supervisor is None:
             raise serializers.ValidationError('Supervisor Employee ID not found.')
         return supervisor
+
+    def validate(self, attrs):
+        # Without a supervisor the worker's requests never reach a supervisor's inbox, so require one whenever any exists.
+        if not attrs.get('supervisor_employee_id') and User.objects.filter(is_active=True, role=Role.SUPERVISOR).exists():
+            raise serializers.ValidationError({'supervisor_employee_id': 'Please select your supervisor.'})
+        return attrs
 
     def create(self, validated_data):
         supervisor = validated_data.pop('supervisor_employee_id', None)

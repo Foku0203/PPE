@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/routes/app_routes.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../shared/models/ppe_item_model.dart';
+import '../../../../shared/models/user_model.dart';
 import '../../../../shared/providers/core_providers.dart';
 import '../../../../shared/widgets/common_widgets.dart';
 import '../../../../shared/widgets/labels.dart';
 import '../../../app_shell/presentation/screens/app_shell.dart';
+import '../../../auth/presentation/screens/auth_provider.dart';
 import '../../data/inventory_repository.dart';
 
 /// Stock overview (README §5.5): available / reserved / issued, reorder and expiry alerts.
@@ -28,6 +30,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final l = context.l10n;
     final summary = ref.watch(inventorySummaryProvider);
     final locale = ref.watch(localeCodeProvider);
+    final role = ref.watch(authControllerProvider.select((s) => s.role));
     return Scaffold(
       appBar: AppBar(
         title: Text(l.inventoryTitle),
@@ -56,12 +59,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           ]),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'receive',
-        onPressed: () => context.push(AppRoutes.receiveStock),
-        icon: const Icon(Icons.move_to_inbox),
-        label: Text(l.actionReceiveStock),
-      ),
+      // EHS oversees stock but does not receive goods into the store.
+      floatingActionButton: role == UserRole.ehs
+          ? null
+          : FloatingActionButton.extended(
+              heroTag: 'receive',
+              onPressed: () => context.push(AppRoutes.receiveStock),
+              icon: const Icon(Icons.move_to_inbox),
+              label: Text(l.actionReceiveStock),
+            ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(inventorySummaryProvider.future),
         child: AsyncValueView(

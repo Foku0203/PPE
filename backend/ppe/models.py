@@ -94,6 +94,7 @@ class PpeItem(models.Model):
     quota = models.PositiveIntegerField(null=True, blank=True)
     lifespan_days = models.PositiveIntegerField(null=True, blank=True)
     reorder_point = models.PositiveIntegerField(default=0)
+    always_special_approval = models.BooleanField(default=False, help_text='Every request needs special approval (Supervisor + EHS), e.g. fall protection.')
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

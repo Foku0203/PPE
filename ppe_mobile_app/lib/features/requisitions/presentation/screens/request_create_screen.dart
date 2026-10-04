@@ -178,6 +178,7 @@ class _LineCard extends ConsumerWidget {
       'ITEM_INACTIVE' => (l.errItemInactive, AppColors.danger),
       'QUOTA_EXCEEDED' => (l.quotaExceededLine('${e?.quota ?? ''}'), AppColors.special),
       'LIFESPAN_NOT_EXPIRED' => (l.lifespanNotExpiredLine(Fmt.date(context, e?.eligibleAt)), AppColors.special),
+      'SPECIAL_ITEM' => (l.specialItemLine, AppColors.special),
       _ => (null, AppColors.success),
     };
     return Card(

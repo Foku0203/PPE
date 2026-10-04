@@ -39,6 +39,7 @@ class AppUser {
     this.supervisorName,
     this.isActive = true,
     this.permissions = const [],
+    this.teamSize = 0,
   });
 
   final int id;
@@ -54,6 +55,9 @@ class AppUser {
   final bool isActive;
   final List<String> permissions;
 
+  /// Active team members (admin user list only).
+  final int teamSize;
+
   factory AppUser.fromJson(Map<String, dynamic> json) => AppUser(
         id: asInt(json['id']),
         employeeId: asString(json['employee_id']),
@@ -67,6 +71,7 @@ class AppUser {
         supervisorName: json['supervisor_name'] as String?,
         isActive: json['is_active'] != false,
         permissions: (json['permissions'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+        teamSize: asIntOrNull(json['team_size']) ?? 0,
       );
 
   Map<String, dynamic> toJson() => {

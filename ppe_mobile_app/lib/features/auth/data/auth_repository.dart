@@ -37,6 +37,23 @@ class RegisterInput {
       };
 }
 
+/// An active supervisor a new worker can pick when registering.
+class SupervisorOption {
+  const SupervisorOption({required this.employeeId, required this.displayName, this.department = ''});
+
+  factory SupervisorOption.fromJson(Map<String, dynamic> json) => SupervisorOption(
+        employeeId: json['employee_id'] as String,
+        displayName: json['display_name'] as String? ?? '',
+        department: json['department'] as String? ?? '',
+      );
+
+  final String employeeId;
+  final String displayName;
+  final String department;
+
+  String get label => [displayName, employeeId, if (department.isNotEmpty) department].join(' · ');
+}
+
 class AuthRepository {
   AuthRepository(this._api, this._tokens, this._store);
 
@@ -48,6 +65,10 @@ class AuthRepository {
       _saveSession(await _api.post(ApiEndpoints.login, data: {'employee_id': employeeId.trim(), 'password': password}));
 
   Future<AppUser> register(RegisterInput input) async => _saveSession(await _api.post(ApiEndpoints.register, data: input.toJson()));
+
+  Future<List<SupervisorOption>> supervisors() async => [
+        for (final json in await _api.get(ApiEndpoints.supervisors) as List) SupervisorOption.fromJson(Map<String, dynamic>.from(json as Map)),
+      ];
 
   Future<AppUser> _saveSession(dynamic data) async {
     await _tokens.saveTokens(access: data['access'] as String, refresh: data['refresh'] as String);
@@ -102,3 +123,5 @@ class AuthRepository {
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepository(ref.watch(apiClientProvider), ref.watch(tokenStorageProvider), ref.watch(localStoreProvider)),
 );
+
+final supervisorOptionsProvider = FutureProvider.autoDispose<List<SupervisorOption>>((ref) => ref.watch(authRepositoryProvider).supervisors());

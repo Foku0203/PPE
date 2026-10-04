@@ -66,6 +66,9 @@ CATALOG = [
      ('ချိတ်နှစ်ခုပါ ဘေးကင်းကြိုး', 'အရှိန်စုပ်ကိရိယာပါ ကြိုး (EN355)')),
 ]
 
+# Fall protection: every request needs special approval (Supervisor + EHS), whoever asks.
+ALWAYS_SPECIAL = {'PPE-HAR', 'PPE-LYD'}
+
 CATALOG_ZH = {
     'PPE-HLM': ('安全帽', '带可调节棘轮的安全帽，防冲击和防坠落物。'),
     'PPE-GOG': ('安全眼镜', '透明聚碳酸酯镜片，带侧护罩，防刮擦。'),
@@ -117,7 +120,8 @@ class Command(BaseCommand):
         for (code, category, icon, unit, sizes, serial, returnable, quota, lifespan, reorder, stock, en, th, my) in CATALOG:
             item, _ = PpeItem.objects.update_or_create(code=code, defaults={
                 'category': category, 'icon_key': icon, 'unit': unit, 'sizes': sizes, 'requires_serial': serial, 'is_returnable': returnable,
-                'quota': quota, 'lifespan_days': lifespan, 'reorder_point': reorder, 'active': True})
+                'quota': quota, 'lifespan_days': lifespan, 'reorder_point': reorder, 'active': True,
+                'always_special_approval': code in ALWAYS_SPECIAL})
             for locale, (name, description) in [('EN', en), ('TH', th), ('MY', my), ('ZH', CATALOG_ZH[code])]:
                 PpeTranslation.objects.update_or_create(ppe_item=item, locale=locale, defaults={'name': name, 'description': description})
             items[code] = item

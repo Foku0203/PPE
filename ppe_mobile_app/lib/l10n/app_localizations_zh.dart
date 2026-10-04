@@ -103,7 +103,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get errActiveRequestExists => '该物品已有未完成的申请。';
 
   @override
-  String get errSpecialReasonRequired => '提前更换或超出配额时，请填写理由。';
+  String get errSpecialReasonRequired => '请填写特别审批理由。';
 
   @override
   String get errSizeRequired => '请为每个物品选择尺码。';
@@ -182,6 +182,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get supervisorEmployeeId => '主管工号';
+
+  @override
+  String get selectSupervisor => '您的主管';
+
+  @override
+  String get searchSupervisor => '点击选择，或输入姓名/工号搜索';
 
   @override
   String get confirmPassword => '确认密码';
@@ -549,7 +555,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get specialReasonLabel => '特别审批理由';
 
   @override
-  String get specialReasonHint => '请说明提前或超额领取的原因';
+  String get specialReasonHint => '请说明需要该物品的原因';
 
   @override
   String get submitRequest => '提交申请';
@@ -571,6 +577,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String lifespanNotExpiredLine(String date) {
     return '$date 前未到更换期 – 需特别审批';
   }
+
+  @override
+  String get specialItemLine => '防坠落用品 – 每次都需特别审批';
 
   @override
   String stockLine(String count) {
@@ -1148,6 +1157,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get userUpdated => '用户已更新';
+
+  @override
+  String transferTeam(int count) {
+    return '将团队（$count 人）移交给新主管';
+  }
+
+  @override
+  String transferTeamTo(String name) {
+    return '$name 团队的新主管';
+  }
+
+  @override
+  String transferTeamDone(int count) {
+    return '已将 $count 人移交给新主管';
+  }
+
+  @override
+  String get errTeamNotEmpty => '该主管仍有团队成员，请先将团队移交给其他主管。';
+
+  @override
+  String get noOtherSupervisor => '暂无其他在职主管，请先创建或将用户设为主管。';
 
   @override
   String get supervisorIdOptional => '主管用户 ID（选填）';

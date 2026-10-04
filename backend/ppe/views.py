@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.db import transaction
 from django.db.models import F, Prefetch, Q, Sum
 from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404
@@ -123,6 +124,16 @@ class RegisterView(APIView):
         return Response(_tokens_for(user), status=status.HTTP_201_CREATED)
 
 
+class SupervisorOptionsView(APIView):
+    """Public list of active supervisors for the registration picker (name, ID and department only)."""
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        supervisors = User.objects.filter(is_active=True, role=Role.SUPERVISOR).order_by('display_name')
+        return Response([{'employee_id': u.employee_id, 'display_name': u.display_name, 'department': u.department} for u in supervisors])
+
+
 class LogoutView(APIView):
     """Revokes the refresh token and deactivates the device push token (device revoke)."""
     permission_classes = [IsAuthenticated]
@@ -175,8 +186,10 @@ class MyIssuedItemsView(APIView):
     def get(self, request):
         user_id = request.query_params.get('user_id')
         user = request.user
-        if user_id and request.user.role in [Role.SUPERVISOR, *STORE_ROLES]:
+        if user_id and request.user.role in STORE_ROLES:
             user = get_object_or_404(User, pk=user_id)
+        elif user_id and request.user.role == Role.SUPERVISOR:
+            user = get_object_or_404(User, pk=user_id, supervisor=request.user)
         lines = (RequisitionItem.objects.filter(requisition__requester=user, requisition__status=RequisitionStatus.COMPLETED, is_returned=False)
                  .select_related('ppe_item', 'requisition').prefetch_related('ppe_item__translations').order_by('-requisition__updated_at'))
         from .serializers import RequisitionItemSerializer
@@ -220,6 +233,22 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
         user = serializer.save()
         audit(actor=self.request.user, action='UPDATE_USER', entity='User', entity_id=user.pk, before=before,
               after={'role': user.role, 'is_active': user.is_active, 'supervisor': user.supervisor_id})
+
+
+class UserTeamTransferView(APIView):
+    """Admin: hand every member of a supervisor's team to another supervisor (e.g. the supervisor moves or leaves)."""
+    permission_classes = [IsAdmin]
+
+    def post(self, request, pk):
+        source = get_object_or_404(User, pk=pk)
+        target = User.objects.filter(pk=request.data.get('to_supervisor'), is_active=True, role=Role.SUPERVISOR).first()
+        if target is None or target.pk == source.pk:
+            raise BusinessRuleError('INVALID_SUPERVISOR', 'Choose another active supervisor.', 400)
+        members = list(User.objects.filter(supervisor=source).values_list('pk', flat=True))
+        User.objects.filter(pk__in=members).update(supervisor=target)
+        audit(actor=request.user, action='TRANSFER_TEAM', entity='User', entity_id=source.pk,
+              before={'supervisor': source.pk}, after={'supervisor': target.pk, 'members': members})
+        return Response({'moved': len(members), 'to_supervisor': target.pk})
 
 
 class DeviceTokenView(APIView):
@@ -492,12 +521,14 @@ class InventoryIssueView(APIView):
         requisition = _get_visible(request, pk)
         method = 'MANUAL'
         qr_token = serializer.validated_data['qr_token']
-        if qr_token:
-            challenge = resolve_qr(token=qr_token)
-            if challenge.requisition_id != requisition.pk:
-                raise BusinessRuleError('QR_MISMATCH', 'This QR code belongs to a different requisition.')
-            method = 'QR'
-        issue_requisition(requisition_id=requisition.pk, actor=request.user, serial_numbers=serializer.validated_data['serial_numbers'], method=method)
+        # One transaction: if the issue fails (e.g. serial mismatch) the pickup QR stays unused and can be rescanned.
+        with transaction.atomic():
+            if qr_token:
+                challenge = resolve_qr(token=qr_token)
+                if challenge.purpose != 'PICKUP' or challenge.requisition_id != requisition.pk:
+                    raise BusinessRuleError('QR_MISMATCH', 'This QR code belongs to a different requisition.')
+                method = 'QR'
+            issue_requisition(requisition_id=requisition.pk, actor=request.user, serial_numbers=serializer.validated_data['serial_numbers'], method=method)
         return _detail(request, pk)
 
 

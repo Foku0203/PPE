@@ -158,7 +158,7 @@ class Eligibility {
   final bool allowed;
   final bool specialApprovalRequired;
 
-  /// ACTIVE_REQUEST_EXISTS | LIFESPAN_NOT_EXPIRED | QUOTA_EXCEEDED | ITEM_INACTIVE | null
+  /// ACTIVE_REQUEST_EXISTS | LIFESPAN_NOT_EXPIRED | QUOTA_EXCEEDED | SPECIAL_ITEM | ITEM_INACTIVE | null
   final String? reason;
   final DateTime? eligibleAt;
   final DateTime? lastIssuedAt;
